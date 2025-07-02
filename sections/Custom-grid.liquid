@@ -1,0 +1,53 @@
+{% schema %}
+{
+  "name": "Custom Grid",
+  "settings": [
+    { "type": "product", "id": "product1", "label": "Product 1" },
+    { "type": "product", "id": "product2", "label": "Product 2" },
+    { "type": "product", "id": "product3", "label": "Product 3" },
+    { "type": "product", "id": "product4", "label": "Product 4" },
+    { "type": "product", "id": "product5", "label": "Product 5" },
+    { "type": "product", "id": "product6", "label": "Product 6" },
+    { "type": "text", "id": "grid_title", "label": "Grid Title", "default": "Tisso vision in the wild" }
+  ],
+  "presets": [
+    { "name": "Custom Grid", "category": "Custom" }
+  ]
+}
+{% endschema %}
+
+<div class="custom-grid-section">
+  <h2 class="custom-grid-title">
+    {{ section.settings.grid_title }}
+  </h2>
+
+  <div class="custom-grid">
+    {% for i in (1..6) %}
+      {% assign product_key = 'product' | append: i %}
+      {% assign product_handle = section.settings[product_key] %}
+      {% assign product = all_products[product_handle] %}
+      {% if product %}
+        <div class="product-card" data-product='{
+          "id": {{ product.id }},
+          "title": {{ product.title | json }},
+          "price": {{ product.price }},
+          "currency": "{{ cart.currency.iso_code }}",
+          "description": {{ product.description | json }},
+          "variants": {{ product.variants | json }},
+          "featured_image": { "src": "{{ product.featured_image | img_url: 'medium' }}" }
+        }'>
+          <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+          <h3>{{ product.title }}</h3>
+          <button class="view-product-btn" type="button">View Details</button>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+
+<div id="product-popup" class="product-popup" style="display:none;">
+  <!-- Popup content will be injected by JS -->
+</div>
+
+{{ 'Custom-grid.css' | asset_url | stylesheet_tag }}
+{{ 'Custom-grid.js' | asset_url | script_tag }}
